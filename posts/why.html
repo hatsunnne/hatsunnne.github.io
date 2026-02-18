@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>why i wanted to join web3 &mdash; hatsunnne</title>
+  <link rel="icon" type="image/png" href="../profile.png">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --miku-teal: #39c5bb;
+      --miku-cyan: #00e5ff;
+      --miku-aqua: #40f8e8;
+      --miku-sky: #69d2e7;
+      --miku-blue: #0af;
+      --miku-light: #86e3dc;
+      --miku-pink: #e84f8a;
+      --miku-hotpink: #ff6b9d;
+      --miku-bg: #060610;
+      --miku-surface: #0d0d1a;
+      --miku-text: #d8e0ec;
+      --miku-muted: #6878a0;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--miku-bg);
+      color: var(--miku-text);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ===== Canvas ===== */
+    #bgCanvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* ===== Scan lines ===== */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: repeating-linear-gradient(
+        0deg, transparent, transparent 2px,
+        rgba(57, 197, 187, 0.012) 2px,
+        rgba(57, 197, 187, 0.012) 4px
+      );
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* ===== Grid ===== */
+    .grid-bg {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-image:
+        linear-gradient(rgba(57, 197, 187, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(57, 197, 187, 0.03) 1px, transparent 1px);
+      background-size: 50px 50px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ===== Orbs ===== */
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(100px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .orb-1 {
+      width: 350px; height: 350px;
+      background: radial-gradient(circle, rgba(0, 229, 255, 0.12), rgba(57, 197, 187, 0.04));
+      top: 0; right: -100px;
+      animation: orbF1 12s infinite ease-in-out;
+    }
+    .orb-2 {
+      width: 250px; height: 250px;
+      background: radial-gradient(circle, rgba(232, 79, 138, 0.08), transparent);
+      bottom: 15%; left: -80px;
+      animation: orbF2 15s infinite ease-in-out;
+    }
+    .orb-3 {
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(64, 248, 232, 0.06), transparent);
+      top: 50%; left: 50%;
+      animation: orbF3 18s infinite ease-in-out;
+    }
+
+    @keyframes orbF1 { 0%, 100% { transform: translate(0,0); } 50% { transform: translate(-50px,30px); } }
+    @keyframes orbF2 { 0%, 100% { transform: translate(0,0); } 50% { transform: translate(40px,-40px); } }
+    @keyframes orbF3 { 0%, 100% { transform: translate(0,0); } 33% { transform: translate(20px,-30px); } 66% { transform: translate(-20px,20px); } }
+
+    /* ===== Music notes ===== */
+    .note {
+      position: fixed;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 1;
+      animation: floatNote 10s infinite ease-in-out;
+      filter: drop-shadow(0 0 6px var(--miku-teal));
+    }
+
+    @keyframes floatNote {
+      0% { transform: translateY(100vh) rotate(0deg) scale(0.5); opacity: 0; }
+      10% { opacity: 0.2; }
+      50% { opacity: 0.3; }
+      90% { opacity: 0.1; }
+      100% { transform: translateY(-10vh) rotate(720deg) scale(1.2); opacity: 0; }
+    }
+
+    /* ===== Container ===== */
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 0 28px;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* ===== Nav ===== */
+    nav {
+      padding: 32px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      font-family: 'Space Mono', monospace;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--miku-teal);
+      text-decoration: none;
+      transition: all 0.3s;
+    }
+    .logo::after { content: '_'; animation: blink 1s step-end infinite; color: var(--miku-cyan); }
+    .logo:hover { text-shadow: 0 0 20px rgba(57, 197, 187, 0.5); color: var(--miku-cyan); }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    .back-link {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--miku-muted);
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .back-link:hover { color: var(--miku-cyan); text-shadow: 0 0 10px rgba(0, 229, 255, 0.3); }
+    .back-link .arrow { transition: transform 0.3s; }
+    .back-link:hover .arrow { transform: translateX(-4px); }
+
+    /* ===== Article header ===== */
+    .article-header {
+      padding: 60px 0 40px;
+      text-align: center;
+    }
+
+    .article-meta {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .article-date {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--miku-muted);
+      letter-spacing: 1.5px;
+    }
+
+    .article-badge {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.55rem;
+      padding: 3px 10px;
+      border-radius: 10px;
+      background: rgba(0, 229, 255, 0.08);
+      color: var(--miku-cyan);
+      border: 1px solid rgba(0, 229, 255, 0.2);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+    }
+
+    .article-title {
+      font-family: 'Space Mono', monospace;
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, var(--miku-teal), var(--miku-cyan), var(--miku-aqua), var(--miku-sky));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      background-size: 300% 300%;
+      animation: titleGrad 6s ease-in-out infinite;
+      line-height: 1.3;
+    }
+
+    @keyframes titleGrad {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    .article-tags {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .atag {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.62rem;
+      padding: 4px 12px;
+      border-radius: 15px;
+      letter-spacing: 1px;
+    }
+
+    .atag-teal { border: 1px solid rgba(57,197,187,0.25); color: var(--miku-teal); background: rgba(57,197,187,0.05); }
+    .atag-cyan { border: 1px solid rgba(0,229,255,0.25); color: var(--miku-cyan); background: rgba(0,229,255,0.05); }
+    .atag-pink { border: 1px solid rgba(232,79,138,0.25); color: var(--miku-pink); background: rgba(232,79,138,0.05); }
+
+    /* ===== Divider ===== */
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--miku-teal), var(--miku-cyan), var(--miku-teal), transparent);
+      margin: 40px 0;
+      opacity: 0.2;
+      position: relative;
+    }
+
+    .divider::after {
+      content: '';
+      position: absolute;
+      width: 40px; height: 3px;
+      background: linear-gradient(90deg, var(--miku-teal), var(--miku-cyan));
+      top: -1px; left: 50%;
+      transform: translateX(-50%);
+      border-radius: 2px;
+      animation: divPulse 3s infinite;
+    }
+
+    @keyframes divPulse {
+      0%, 100% { opacity: 0.5; width: 40px; }
+      50% { opacity: 1; width: 70px; box-shadow: 0 0 12px rgba(0, 229, 255, 0.3); }
+    }
+
+    /* ===== Waveform ===== */
+    .waveform {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 2.5px;
+      padding: 20px 0;
+    }
+
+    .wave-bar {
+      width: 2.5px;
+      border-radius: 2px;
+      animation: wave 1.8s ease-in-out infinite;
+      opacity: 0.4;
+    }
+
+    @keyframes wave {
+      0%, 100% { height: 5px; }
+      50% { height: 24px; }
+    }
+
+    /* ===== Article content ===== */
+    .article-body {
+      padding: 20px 0 60px;
+    }
+
+    .article-body p {
+      font-size: 1.02rem;
+      line-height: 1.9;
+      color: var(--miku-text);
+      font-weight: 300;
+      margin-bottom: 24px;
+    }
+
+    .article-body .hl-teal { color: var(--miku-teal); font-weight: 500; }
+    .article-body .hl-cyan { color: var(--miku-cyan); font-weight: 500; }
+    .article-body .hl-pink { color: var(--miku-pink); font-weight: 400; }
+    .article-body .hl-aqua { color: var(--miku-aqua); font-weight: 400; }
+    .article-body .hl-sky { color: var(--miku-sky); font-weight: 400; }
+
+    /* ===== Pull quote ===== */
+    .pull-quote {
+      border-left: 3px solid var(--miku-cyan);
+      padding: 20px 24px;
+      margin: 36px 0;
+      background: rgba(0, 229, 255, 0.03);
+      border-radius: 0 12px 12px 0;
+      position: relative;
+    }
+
+    .pull-quote p {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.92rem !important;
+      color: var(--miku-cyan) !important;
+      line-height: 1.7 !important;
+      font-weight: 400 !important;
+      font-style: italic;
+      margin-bottom: 0 !important;
+    }
+
+    .pull-quote::before {
+      content: '"';
+      position: absolute;
+      top: -8px; left: 12px;
+      font-size: 3rem;
+      color: var(--miku-cyan);
+      opacity: 0.15;
+      font-family: serif;
+    }
+
+    /* ===== End section ===== */
+    .end-section {
+      text-align: center;
+      padding: 20px 0 40px;
+    }
+
+    .end-sig {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--miku-muted);
+      letter-spacing: 2px;
+    }
+
+    .end-sig span {
+      color: var(--miku-teal);
+    }
+
+    .end-kanji {
+      font-size: 0.7rem;
+      color: rgba(57, 197, 187, 0.1);
+      margin-top: 10px;
+      letter-spacing: 8px;
+    }
+
+    /* ===== Scroll reveal ===== */
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ===== Cursor trail ===== */
+    .trail {
+      position: fixed;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9998;
+      opacity: 0;
+      mix-blend-mode: screen;
+    }
+
+    /* ===== Reading progress bar ===== */
+    .progress-bar {
+      position: fixed;
+      top: 0; left: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--miku-teal), var(--miku-cyan), var(--miku-aqua));
+      z-index: 10000;
+      transition: width 0.1s;
+      box-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
+    }
+
+    /* ===== Mobile ===== */
+    @media (max-width: 600px) {
+      .article-title { font-size: 1.5rem; }
+      .article-header { padding: 40px 0 30px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="progress-bar" id="progressBar"></div>
+  <canvas id="bgCanvas"></canvas>
+  <div class="grid-bg"></div>
+
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <div class="container">
+
+    <!-- Nav -->
+    <nav>
+      <a href="../index.html" class="logo">hatsunnne</a>
+      <a href="../index.html" class="back-link">
+        <span class="arrow">&larr;</span> back
+      </a>
+    </nav>
+
+    <!-- Header -->
+    <header class="article-header">
+      <div class="article-meta">
+        <div class="article-date">2026 . 02 . 17</div>
+        <div class="article-badge">personal</div>
+      </div>
+
+      <h1 class="article-title">why i wanted to join web3</h1>
+
+      <div class="article-tags">
+        <span class="atag atag-teal">#web3</span>
+        <span class="atag atag-cyan">#journey</span>
+        <span class="atag atag-pink">#personal</span>
+      </div>
+    </header>
+
+    <div class="divider"></div>
+
+    <div class="waveform"></div>
+
+    <!-- Article -->
+    <article class="article-body">
+
+      <p class="reveal">
+        Honestly, it started with <span class="hl-teal">boredom</span>. I had nothing going on &mdash; no direction, no project, just endless hours scrolling through the internet looking for something that would actually make me <span class="hl-cyan">feel alive</span>. Then one day I stumbled into a rabbit hole about <span class="hl-aqua">smart contracts</span>, about code that runs on a blockchain with no middleman, no permission needed, no one to stop it. Code that holds millions of dollars and lives entirely on its own. I thought to myself: this is either the most beautiful or the most terrifying thing I've ever seen. Probably both. And that's exactly what hooked me.
+      </p>
+
+      <div class="pull-quote reveal">
+        <p>Code that holds millions of dollars and lives entirely on its own &mdash; this is either the most beautiful or the most terrifying thing I've ever seen.</p>
+      </div>
+
+      <p class="reveal">
+        I genuinely believe <span class="hl-cyan">Web3 is the future of the internet</span>. Not the hype, not the speculation, not the noise on Twitter &mdash; but the actual technology underneath. The idea that you can build systems where <span class="hl-teal">trust is replaced by math</span>, where transparency isn't optional but built into every transaction, where anyone with a laptop can verify what's happening without asking for permission. That's not just a cool technology &mdash; that's a <span class="hl-pink">fundamental shift</span> in how humans coordinate. And I want to be part of it, even if I'm 16 and still have a lot to learn.
+      </p>
+
+      <p class="reveal">
+        The thing about Web3 that really got me is the <span class="hl-aqua">security side</span>. When I realized that a single bug in a smart contract can drain millions in seconds &mdash; and that <span class="hl-teal">auditors</span> are the last line of defense between a protocol and catastrophe &mdash; I knew that's where I wanted to be. Not building the next token or the next NFT marketplace, but sitting in the shadows reading <span class="hl-sky">bytecode</span>, finding the vulnerability that nobody else saw, and making sure the protocol survives. There's something poetic about it: <span class="hl-pink">breaking things to protect them</span>.
+      </p>
+
+      <p class="reveal">
+        I'm not going to pretend I know everything. I'm <span class="hl-teal">16</span>, I'm still learning <span class="hl-cyan">Solidity</span>, still wrapping my head around the EVM, still getting confused by storage layouts and delegate calls. But that's the point &mdash; I love the fact that there's always something deeper to understand, always another exploit to study, always another protocol to dissect. This space doesn't wait for you to be ready. It moves fast, it breaks things, and it rewards the <span class="hl-aqua">curious</span>. And if there's one thing I know about myself, it's that I'll never stop being curious about <span class="hl-pink">how things break</span>.
+      </p>
+
+    </article>
+
+    <div class="divider"></div>
+
+    <!-- End -->
+    <div class="end-section">
+      <p class="end-sig">&mdash; <span>hatsunnne</span></p>
+      <p class="end-kanji">&#21021;&#38899;&#12511;&#12463;</p>
+    </div>
+
+  </div>
+
+  <script>
+    // ===== Progress bar =====
+    const progressBar = document.getElementById('progressBar');
+    window.addEventListener('scroll', () => {
+      const scrolled = window.scrollY;
+      const total = document.documentElement.scrollHeight - window.innerHeight;
+      const pct = total > 0 ? (scrolled / total) * 100 : 0;
+      progressBar.style.width = pct + '%';
+    });
+
+    // ===== Particle canvas =====
+    const canvas = document.getElementById('bgCanvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    let w, h;
+
+    function resize() {
+      w = canvas.width = window.innerWidth;
+      h = canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    class Particle {
+      constructor() { this.reset(); }
+      reset() {
+        this.x = Math.random() * w;
+        this.y = Math.random() * h;
+        this.size = Math.random() * 1.8 + 0.4;
+        this.speedX = (Math.random() - 0.5) * 0.25;
+        this.speedY = (Math.random() - 0.5) * 0.25;
+        const colors = ['57,197,187', '0,229,255', '64,248,232', '105,210,231', '0,170,255'];
+        this.color = colors[Math.floor(Math.random() * colors.length)];
+        this.opacity = Math.random() * 0.25 + 0.05;
+        this.pulse = Math.random() * Math.PI * 2;
+        this.pulseSpeed = Math.random() * 0.02 + 0.005;
+      }
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        this.pulse += this.pulseSpeed;
+        if (this.x < 0 || this.x > w || this.y < 0 || this.y > h) this.reset();
+      }
+      draw() {
+        const o = this.opacity + Math.sin(this.pulse) * 0.08;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${this.color},${o})`;
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size * 3, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${this.color},${o * 0.12})`;
+        ctx.fill();
+      }
+    }
+
+    for (let i = 0; i < 60; i++) particles.push(new Particle());
+
+    function drawConnections() {
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 100) {
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.strokeStyle = `rgba(57,197,187,${0.05 * (1 - dist / 100)})`;
+            ctx.lineWidth = 0.4;
+            ctx.stroke();
+          }
+        }
+      }
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, w, h);
+      particles.forEach(p => { p.update(); p.draw(); });
+      drawConnections();
+      requestAnimationFrame(animate);
+    }
+    animate();
+
+    // ===== Music notes =====
+    const noteSymbols = ['\u266A', '\u266B', '\u2669', '\u266C'];
+    const noteColors = ['#39c5bb', '#00e5ff', '#40f8e8', '#69d2e7'];
+    for (let i = 0; i < 10; i++) {
+      const note = document.createElement('div');
+      note.className = 'note';
+      note.textContent = noteSymbols[i % noteSymbols.length];
+      note.style.left = Math.random() * 100 + '%';
+      note.style.animationDelay = Math.random() * 10 + 's';
+      note.style.animationDuration = (8 + Math.random() * 7) + 's';
+      note.style.fontSize = (0.7 + Math.random() * 0.8) + 'rem';
+      note.style.color = noteColors[i % noteColors.length];
+      document.body.appendChild(note);
+    }
+
+    // ===== Waveform =====
+    const waveform = document.querySelector('.waveform');
+    const waveColors = ['#39c5bb', '#00e5ff', '#40f8e8', '#69d2e7', '#0af'];
+    for (let i = 0; i < 50; i++) {
+      const bar = document.createElement('div');
+      bar.className = 'wave-bar';
+      bar.style.animationDelay = (i * 0.04) + 's';
+      bar.style.height = (3 + Math.random() * 12) + 'px';
+      bar.style.background = waveColors[i % waveColors.length];
+      waveform.appendChild(bar);
+    }
+
+    // ===== Scroll reveal =====
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => entry.target.classList.add('visible'), i * 150);
+        }
+      });
+    }, { threshold: 0.1 });
+    reveals.forEach(el => observer.observe(el));
+
+    // ===== Cursor trail =====
+    const trailCount = 8;
+    const trailEls = [];
+    const trailColors = ['#39c5bb', '#00e5ff', '#40f8e8', '#69d2e7', '#0af', '#39c5bb', '#00e5ff', '#40f8e8'];
+    for (let i = 0; i < trailCount; i++) {
+      const t = document.createElement('div');
+      t.className = 'trail';
+      t.style.width = (7 - i * 0.7) + 'px';
+      t.style.height = (7 - i * 0.7) + 'px';
+      t.style.background = trailColors[i];
+      document.body.appendChild(t);
+      trailEls.push({ el: t, x: 0, y: 0 });
+    }
+
+    let mx = 0, my = 0;
+    document.addEventListener('mousemove', (e) => { mx = e.clientX; my = e.clientY; });
+
+    function animateTrail() {
+      let x = mx, y = my;
+      trailEls.forEach((t, i) => {
+        t.x += (x - t.x) * (0.35 - i * 0.03);
+        t.y += (y - t.y) * (0.35 - i * 0.03);
+        t.el.style.left = t.x + 'px';
+        t.el.style.top = t.y + 'px';
+        t.el.style.opacity = (1 - i * 0.12) * 0.5;
+        x = t.x;
+        y = t.y;
+      });
+      requestAnimationFrame(animateTrail);
+    }
+    animateTrail();
+
+    // ===== Click sparkle =====
+    document.addEventListener('click', (e) => {
+      for (let i = 0; i < 8; i++) {
+        const spark = document.createElement('div');
+        const angle = (Math.PI * 2 * i) / 8;
+        const dist = 25 + Math.random() * 25;
+        const tx = Math.cos(angle) * dist;
+        const ty = Math.sin(angle) * dist;
+        spark.style.cssText = `
+          position:fixed; left:${e.clientX}px; top:${e.clientY}px;
+          width:3px; height:3px; border-radius:50%;
+          background:${waveColors[i % waveColors.length]};
+          box-shadow: 0 0 6px ${waveColors[i % waveColors.length]};
+          pointer-events:none; z-index:9997;
+          transform:translate(-50%,-50%);
+          transition: all 0.5s ease-out;
+        `;
+        document.body.appendChild(spark);
+        requestAnimationFrame(() => {
+          spark.style.transform = `translate(calc(-50% + ${tx}px), calc(-50% + ${ty}px))`;
+          spark.style.opacity = '0';
+        });
+        setTimeout(() => spark.remove(), 500);
+      }
+    });
+  </script>
+
+</body>
+</html>
